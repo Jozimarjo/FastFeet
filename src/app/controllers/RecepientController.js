@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Recipents from '../models/Recepients';
+import Recepients from '../models/Recepients';
 
 class RecepientController {
   async store(req, res) {
@@ -24,6 +25,17 @@ class RecepientController {
       city,
       cep,
     });
+    return res.json(rec);
+  }
+
+  async update(req, res) {
+    const { id } = req.params;
+    const recipents = await Recipents.findByPk(id);
+
+    if (!recipents)
+      return res.status(400).json({ error: 'Usuario não encontrado' });
+
+    const rec = await recipents.update(req.body);
     return res.json(rec);
   }
 }
