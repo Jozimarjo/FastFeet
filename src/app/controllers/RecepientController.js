@@ -1,5 +1,4 @@
 import * as Yup from 'yup';
-import Recipents from '../models/Recepients';
 import Recepients from '../models/Recepients';
 
 class RecepientController {
@@ -16,7 +15,7 @@ class RecepientController {
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Validation Fails' });
     const { name, street, number, complement, state, city, cep } = req.body;
-    const rec = await Recipents.create({
+    const rec = await Recepients.create({
       name,
       street,
       number,
@@ -30,7 +29,7 @@ class RecepientController {
 
   async update(req, res) {
     const { id } = req.params;
-    const recipents = await Recipents.findByPk(id);
+    const recipents = await Recepients.findByPk(id);
 
     if (!recipents)
       return res.status(400).json({ error: 'Usuario não encontrado' });
