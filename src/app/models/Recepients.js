@@ -17,6 +17,7 @@ class Recepients extends Model {
         sequelize,
       }
     );
+    return this;
   }
 }
 export default Recepients;

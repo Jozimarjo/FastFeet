@@ -1,6 +1,6 @@
 import { Model, Sequelize } from 'sequelize'; // Sequelize tem q ficar fora das chaves
 
-class DeliveryMans extends Model {
+class Deliveryman extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -9,12 +9,15 @@ class DeliveryMans extends Model {
       },
       {
         sequelize,
+        modelName: 'deliveryman',
+        freezeTableName: true,
       }
     );
+    return this;
   }
 
   static associate(models) {
-    this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
+    this.belongsTo(models.Files, { foreignKey: 'avatar_id', as: 'avatar' });
   }
 }
-export default DeliveryMans;
+export default Deliveryman;
