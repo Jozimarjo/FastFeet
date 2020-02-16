@@ -14,7 +14,6 @@ class Deliverys extends Model {
   }
 
   static associate(models) {
-    console.log('=========== ', models);
     this.belongsTo(models.Files, {
       foreignKey: 'signature_id',
       as: 'signature',

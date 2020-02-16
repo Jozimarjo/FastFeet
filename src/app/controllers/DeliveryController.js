@@ -1,5 +1,8 @@
 import * as Yup from 'yup';
 import Deliverys from '../models/Deliverys';
+import Recepients from '../models/Recepients';
+import Queue from '../../lib/Queue';
+import CancellationMail from '../jobs/CancellationMail';
 
 class DeliveryController {
   async index(req, res) {
@@ -21,12 +24,17 @@ class DeliveryController {
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Validation Fails' });
 
-    const delivery = Deliverys.create({
+    const delivery = await Deliverys.create({
       product,
       recipient_id,
       deliveryman_id,
       signature_id,
     });
+    console.log(delivery);
+    await Queue.add(CancellationMail.key, {
+      delivery,
+    });
+
     return res.json(delivery);
   }
 }
