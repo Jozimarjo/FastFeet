@@ -5,6 +5,9 @@ class Deliverys extends Model {
     super.init(
       {
         product: Sequelize.STRING,
+        start_date: Sequelize.DATE,
+        end_date: Sequelize.DATE,
+        canceled_at: Sequelize.DATE,
       },
       {
         sequelize,

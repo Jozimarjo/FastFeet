@@ -1,8 +1,9 @@
 import * as Yup from 'yup';
 import Deliverys from '../models/Deliverys';
 import Recepients from '../models/Recepients';
+import Deliveryman from '../models/Deliverymans';
 import Queue from '../../lib/Queue';
-import CancellationMail from '../jobs/CancellationMail';
+import DeliveryMail from '../jobs/DeliveryMail';
 
 class DeliveryController {
   async index(req, res) {
@@ -18,7 +19,6 @@ class DeliveryController {
       product: Yup.string().required(),
       recipient_id: Yup.number().required(),
       deliveryman_id: Yup.number().required(),
-      signature_id: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body)))
@@ -30,12 +30,53 @@ class DeliveryController {
       deliveryman_id,
       signature_id,
     });
-    console.log(delivery);
-    await Queue.add(CancellationMail.key, {
-      delivery,
+
+    const result = await Deliverys.findOne({
+      where: {
+        recipient_id,
+      },
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['id', 'name', 'email'],
+        },
+        {
+          model: Recepients,
+          as: 'recipient',
+          attributes: ['id', 'name'],
+        },
+      ],
+    });
+    await Queue.add(DeliveryMail.key, {
+      result,
     });
 
     return res.json(delivery);
+  }
+
+  async update(req, res) {
+    const { id } = req.params;
+    const deliverys = await Deliverys.findByPk(id);
+
+    const schema = Yup.object().shape({
+      product: Yup.string(),
+      recipient_id: Yup.number(),
+      deliveryman_id: Yup.number(),
+      signature_id: Yup.number(),
+    });
+
+    if (!(await schema.isValid(req.body)))
+      return res.status(400).json({ error: 'Validation Fails' });
+    const delive = await deliverys.update(req.body);
+    return res.json(delive);
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    const deliverys = await Deliverys.findByPk(id);
+    deliverys.destroy();
+    return res.json(deliverys);
   }
 }
 export default new DeliveryController();
