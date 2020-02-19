@@ -12,6 +12,7 @@ import FileController from './app/controllers/FileController';
 import DeliveryController from './app/controllers/DeliveryController';
 import DeliveryStartController from './app/controllers/DeliveryStartController';
 import DeliveryFinishController from './app/controllers/DeliveryFinishController';
+import DeliveryProblemsController from './app/controllers/DeliveryProblemsController';
 
 // import User from './app/models/User';
 
@@ -33,6 +34,11 @@ routes.get(
 ); // encomendas atribuidas a ele, que não estejam entregues ou canceladas;
 routes.post('/deliverymans', authMiddleware, DeliverymanController.store);
 routes.put('/deliverymans/:id', authMiddleware, DeliverymanController.update);
+routes.delete(
+  '/deliverymans/:id',
+  authMiddleware,
+  DeliverymanController.delete
+);
 
 routes.get('/deliverys', authMiddleware, DeliveryController.index);
 routes.post('/deliverys', authMiddleware, DeliveryController.store);
@@ -47,12 +53,13 @@ routes.put(
   DeliveryFinishController.store
 );
 
-routes.post('/files', upload.single('file'), FileController.store);
-
+routes.get('/delivery/:id/problems', DeliveryProblemsController.index);
+routes.post('/delivery/:id/problems', DeliveryProblemsController.store);
 routes.delete(
-  '/deliverymans/:id',
-  authMiddleware,
-  DeliverymanController.delete
+  '/problem/:id/cancel-delivery',
+  DeliveryProblemsController.delete
 );
+
+routes.post('/files', upload.single('file'), FileController.store);
 
 export default routes;
