@@ -1,36 +1,16 @@
 import * as Yup from 'yup';
-import { Op } from 'sequelize';
-import { startOfDay, endOfDay } from 'date-fns';
+
 import Deliveryman from '../models/Deliverymans';
-import Deliverys from '../models/Deliverys';
 
 class DeliverymanController {
   async show(req, res) {
-    const { id } = req.params;
-    const deliverymans = await Deliverys.findAll({
-      where: {
-        deliveryman_id: id,
-        end_date: {
-          [Op.between]: [
-            startOfDay(new Date('2020-01-17')),
-            endOfDay(new Date()),
-          ],
-        },
-      },
-    });
-
-    return res.json(deliverymans);
+    const deliverymen = await Deliveryman.findAll();
+    res.json(deliverymen);
   }
 
   async index(req, res) {
     const { id } = req.params;
-    const deliverymans = await Deliverys.findAll({
-      where: {
-        deliveryman_id: id,
-        canceled_at: null,
-        end_date: null,
-      },
-    });
+    const deliverymans = await Deliveryman.findByPk(id);
 
     return res.json(deliverymans);
   }

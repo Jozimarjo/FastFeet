@@ -1,4 +1,6 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
+import { startOfDay, endOfDay } from 'date-fns';
 import Deliverys from '../models/Deliverys';
 import Recepients from '../models/Recepients';
 import Deliveryman from '../models/Deliverymans';
@@ -6,10 +8,20 @@ import Queue from '../../lib/Queue';
 import DeliveryMail from '../jobs/DeliveryMail';
 
 class DeliveryController {
+  /**
+   * lista todas as entregas nao finalizadas ou canceladas  de um entregador
+   */
   async index(req, res) {
-    const deliverys = await Deliverys.findAll();
+    const { id } = req.params;
+    const deliverymans = await Deliverys.findAll({
+      where: {
+        deliveryman_id: id,
+        canceled_at: null,
+        end_date: null,
+      },
+    });
 
-    return res.json(deliverys);
+    return res.json(deliverymans);
   }
 
   async store(req, res) {
@@ -77,6 +89,26 @@ class DeliveryController {
     const deliverys = await Deliverys.findByPk(id);
     deliverys.destroy();
     return res.json(deliverys);
+  }
+
+  /**
+   * lista todas as entregas finalizadas de um entregador
+   */
+  async show(req, res) {
+    const { id } = req.params;
+    const deliverymans = await Deliverys.findAll({
+      where: {
+        deliveryman_id: id,
+        end_date: {
+          [Op.between]: [
+            startOfDay(new Date('2020-01-17')),
+            endOfDay(new Date()),
+          ],
+        },
+      },
+    });
+
+    return res.json(deliverymans);
   }
 }
 export default new DeliveryController();

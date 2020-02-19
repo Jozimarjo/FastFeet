@@ -6,6 +6,11 @@ import Deliveryman from '../models/Deliverymans';
 import Recepients from '../models/Recepients';
 
 class DeliveryProblemsController {
+  async show(req, res) {
+    const problems = await DeliveryProblems.findAll();
+    return res.json(problems);
+  }
+
   async index(req, res) {
     const { id } = req.params;
     const problems = await DeliveryProblems.findAll({
@@ -48,7 +53,6 @@ class DeliveryProblemsController {
       ],
     });
     await delivery.update({ canceled_at: new Date() });
-    console.log(delivery);
     await Queue.add(Cancellation.key, {
       delivery,
     });

@@ -5,6 +5,8 @@ class DeliveryProblems extends Model {
     super.init(
       {
         description: Sequelize.STRING,
+        created_at: Sequelize.DATE,
+        updated_at: Sequelize.DATE,
       },
       {
         sequelize,

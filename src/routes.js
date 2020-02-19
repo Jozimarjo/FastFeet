@@ -26,13 +26,8 @@ routes.post('/sessions', SessionController.store); // login
 routes.post('/recepients', authMiddleware, RecepientController.store);
 routes.put('/recepients/:id', authMiddleware, RecepientController.update);
 
-routes.get('/deliverymans/:id', authMiddleware, DeliverymanController.show); // encomendas ja entregues
-routes.get(
-  '/deliverymans/:id/deliveries',
-  authMiddleware,
-  DeliverymanController.index
-); // encomendas atribuidas a ele, que não estejam entregues ou canceladas;
-routes.post('/deliverymans', authMiddleware, DeliverymanController.store);
+routes.get('/deliverymans', authMiddleware, DeliverymanController.show);
+routes.get('/deliverymans/:id', authMiddleware, DeliverymanController.index);
 routes.put('/deliverymans/:id', authMiddleware, DeliverymanController.update);
 routes.delete(
   '/deliverymans/:id',
@@ -44,6 +39,24 @@ routes.get('/deliverys', authMiddleware, DeliveryController.index);
 routes.post('/deliverys', authMiddleware, DeliveryController.store);
 routes.put('/deliverys/:id', authMiddleware, DeliveryController.update);
 routes.delete('/deliverys/:id', authMiddleware, DeliveryController.delete);
+
+/**
+ *  // encomendas atribuidas a um entregador, que não estejam entregues ou canceladas;
+ */
+routes.get(
+  '/deliverymans/:id/deliveries/not_delivered',
+  authMiddleware,
+  DeliveryController.index
+);
+
+/**
+ *  encomendas ja entregues
+ */
+routes.get(
+  '/deliverymans/:id/deliveries',
+  authMiddleware,
+  DeliveryController.show
+);
 
 routes.put('/deliverysStart/:id', DeliveryStartController.update);
 
